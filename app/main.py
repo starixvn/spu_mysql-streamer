@@ -20,10 +20,10 @@ if __name__ == '__main__':
        sys.stderr.write('%%Error: (%s) unable to start thread.' %str(ex))
 
     cts_shm = shared_memory.ShareableList([str('6f78a381-5583-11eb-bc7d-0242ac170002:100000000000'),str('yyyy-mm-dd hh:MM:ss'),0],name='cts_shm')
-    #print('cts_shm %s' %str(cts_shm.shm.name))
+    
     run_count = 0
     while True:
-        if run_count==0:
+        if run_count == 0:
             BinlogFactory.process(act, 'up')
         else:
             BinlogFactory.process(act, 'recovery')

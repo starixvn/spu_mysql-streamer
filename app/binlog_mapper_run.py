@@ -42,10 +42,9 @@ from app_logging import logging as log
 from replicate_to_neo4j import Neo4jMessageMapper
 
 class BinlogServer(object):
-	def __init__(self, mysql_conf, repl_conf, kafka_conf):
+	def __init__(self, mysql_conf, repl_conf):
 		self.mysql = mysql_conf
 		self.repl = repl_conf
-		self.kafka = kafka_conf
 
 		self.binlog_stream:BinLogStreamReader = None
 
@@ -99,10 +98,10 @@ class BinlogServer(object):
 
 			for evt in self.binlog_stream:
 				payload = build_message(evt)
-				#print(evt._dump())
+				
 				if payload.evt_type in [BINLOG.UPDATE_ROWS_EVENT_V2, BINLOG.WRITE_ROWS_EVENT_V2, BINLOG.DELETE_ROWS_EVENT_V2] and \
 					payload.message:
-					#for msg in payload.messages:
+
 					try:
 						send_topic = '{0}{1}'.format('',payload.message.table).lower()
 						

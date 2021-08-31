@@ -5,12 +5,11 @@ from binlog_mapper_run import BinlogServer
 # replicator
 mysql_conf = util_get_config('mysql')
 repl_conf = util_get_config('replication')
-kafka_conf = util_get_config('kafka')
 
 
 
 class BinlogFactory:
-    binlog = BinlogServer(mysql_conf, repl_conf, kafka_conf)
+    binlog = BinlogServer(mysql_conf, repl_conf)
     
     @staticmethod
     def process(act, mode):
