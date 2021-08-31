@@ -51,6 +51,22 @@ class ADD_MANUALLY(object):
             createdDate=str(createdDate).replace(" ", "T")
         self.CreatedDate=createdDate
 
+class ASS_BY_AI(object):
+    def __init__(self, fromCustID, toCustID, createdDate=datetime.now().replace(microsecond=0).isoformat()):
+        self.FromCustID = fromCustID
+        self.ToCustID = toCustID
+        if createdDate is not None:
+            createdDate=str(createdDate).replace(" ", "T")
+        self.CreatedDate=createdDate
+
+class ASS_BY_IP(object):
+    def __init__(self, fromCustID, toCustID, createdDate=datetime.now().replace(microsecond=0).isoformat()):
+        self.FromCustID = fromCustID
+        self.ToCustID = toCustID
+        if createdDate is not None:
+            createdDate=str(createdDate).replace(" ", "T")
+        self.CreatedDate=createdDate
+
 class HAS_EXCEPTION(object):
     def __init__(self, fromCTSCustID, toCTSCustID, createdDate=datetime.now().replace(microsecond=0).isoformat()):
         self.FromCTSCustID=fromCTSCustID

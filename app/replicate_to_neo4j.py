@@ -6,11 +6,11 @@ from neo4j_migration.evidence_run import EvidenceRun
 from neo4j_migration.association_device_run import AssociationByDeviceRun
 from neo4j_migration.association_manual_run import AssociationByManualRun
 from neo4j_migration.association_remove_run import AssociationRemoveRun
+from neo4j_migration.association_by_AI_run import AssociationByAIRun
+from neo4j_migration.association_by_IP_run import AssociationByIPRun
 from neo4j_migration.customer_classification_run import CTSCustomerClassificationRun
 from neo4j_migration.staticlist_run import StaticListRun
 from neo4j_migration.customer_evidence_run import CustEvidenceRun
-#from neo4j_migration.nodes import CTSCustomer,Subscriber,Category,Evidence,Device,CustomerCategory,StaticList
-#from neo4j_migration.relationships import ADD_MANUALLY,HAS_EVIDENCE,HAS_EXCEPTION
 from replication import BuildPayload
 
 class Neo4jMessageMapper(object):
