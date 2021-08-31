@@ -1,0 +1,33 @@
+version: '3.7'
+services:
+  mysql-streamer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PYTHON_TAG: ${PYTHON_TAG}
+    hostname: ${CONNECTOR_HOST}
+    container_name: ${CONNECTOR_HOST}
+    restart: always
+    volumes:
+      - ${CONNECTOR_CONF}:/app/conf/:rw
+      - ${CONNECTOR_LOGS}:/logs:rw
+    environment:
+      PYTHON_VERSION: ${PYTHON_TAG}
+      PYTHONUNBUFFERED: ${PYTHON_UNBUFFERED}
+      TZ: ${CONNECTOR_TZ}
+
+    env_file:
+      - streamer.env
+
+    networks:
+      app_network:
+        aliases:
+          - ${CONNECTOR_HOST}
+
+networks:
+  app_network:
+    external: ${NETWORK_EXTERNAL}
+    name: ${NETWORK_NAME}
+    driver: ${NETWORK_DRIVER}
+    
