@@ -36,7 +36,7 @@ class CTSCustomerRun(Neo4jContext):
             MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
             MATCH (s:Subscriber {SubscriberID:toInteger(row.SubscriberID)})
             WHERE row.SubscriberID > 0
-            MERGE (n)-[r:BELONG_TO_SUB]-(s)
+            MERGE (n)-[r:BELONG_TO_SUB]->(s)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
             RETURN ID(r) AS RID
             """

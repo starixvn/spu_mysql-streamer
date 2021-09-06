@@ -48,7 +48,8 @@ def binlog_job():
           second_behind_master = (datetime.now().replace(microsecond=0) - last_commit_time).total_seconds()
   
       # write file
-      write_gtid_file='{0}/auto-gtid.txt'.format(CONF_PATH)
+      #write_gtid_file='{0}/auto-gtid.txt'.format(CONF_PATH)
+      write_gtid_file='D:/Work/CTS/MySQL-Streamer/conf/auto-gtid.txt'.format(CONF_PATH)
       with open(write_gtid_file,'w+') as auto_file:
           auto_file.write('{0}\t{1}\t{2}'.format(slave_gtid_executed, last_commit_time, last_position))
           auto_file.close()

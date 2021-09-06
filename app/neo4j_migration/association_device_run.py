@@ -17,8 +17,7 @@ class AssociationByDeviceRun(Neo4jContext):
         create_bulk = """
             UNWIND $batch as row
             MERGE (n:Device {DeviceID:toInteger(row.DeviceID)})
-            ON CREATE SET n.DeviceID=toInteger(row.DeviceID)
-                , n.CreatedDate=datetime(row.CreatedDate)
+            ON CREATE SET n.CreatedDate=datetime(row.CreatedDate)
             ON MATCH SET n.LastAssDate=datetime(row.CreatedDate)
             RETURN ID(n) as NID
             """

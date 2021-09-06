@@ -33,7 +33,7 @@ class CTSCustomerClassificationRun(Neo4jContext):
             UNWIND $batch as row
             MERGE (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
             MERGE (c:CustomerCategory {CategoryID:row.CategoryID})
-            MERGE (n)-[r:HAS_CATEGORY]-(c)
+            MERGE (n)-[r:HAS_CATEGORY]->(c)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
             RETURN ID(r) as RID
             """

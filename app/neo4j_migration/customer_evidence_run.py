@@ -34,9 +34,9 @@ class CustEvidenceRun(Neo4jContext):
             MATCH (n:CTSCustomer {CTSCustID:row.CTSCustID})
             MATCH (c:Evidence {EvidenceID:row.EvidenceID})
             WHERE row.Level = 0
-            MERGE (n)-[r:HAS_EVIDENCE]-(c)
+            MERGE (n)-[r:HAS_EVIDENCE]->(c)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
-            WITH n,c,r
+            WITH DISTINCT n
             SET n:FlaggedCustomer
             RETURN ID(r) as RID
             """
