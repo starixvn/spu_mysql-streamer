@@ -32,8 +32,8 @@ class AssociationByIPRun(Neo4jContext):
         batch=json.loads(raws)
         create_batch = """
                     UNWIND $batch as row
-                    MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID)})
-                    MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID)})
+                    MERGE (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
+                    MERGE (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
                     WHERE row.FromCustID <> row.ToCustID
                     MERGE (f)-[r:ASS_BY_IP]-(t)
                     ON CREATE set r.CreatedDate=datetime(row.CreatedDate)
@@ -53,8 +53,8 @@ class AssociationByIPRun(Neo4jContext):
         batch=json.loads(raws)
         create_one = """
                     UNWIND $batch as row
-                    MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID)})
-                    MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID)})
+                    MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
+                    MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
                     WHERE row.FromCustID <> row.ToCustID
                     MERGE (f)-[r:ASS_BY_IP]-(t)
                     ON MATCH SET r.CreatedDate=datetime(row.CreatedDate)
@@ -74,8 +74,8 @@ class AssociationByIPRun(Neo4jContext):
         batch=json.loads(raws)
         remove_all = """
                 UNWIND $batch as row
-                MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID)})
-                MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID)})
+                MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
+                MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
                 MERGE (f)-[r:ASS_BY_IP]-(t)
                 DELETE r
                """
