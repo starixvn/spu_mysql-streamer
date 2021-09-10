@@ -34,9 +34,8 @@ class AssociationByAIRun(Neo4jContext):
                     UNWIND $batch as row
                     MERGE (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
                     MERGE (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
-                    WHERE row.FromCustID <> row.ToCustID
                     MERGE (f)-[r:ASS_BY_AI]-(t)
-                    ON CREATE set r.CreatedDate=datetime(row.CreatedDate)
+                    ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
                     RETURN ID(r) as NID
                 """
         

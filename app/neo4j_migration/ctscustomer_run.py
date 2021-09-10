@@ -14,8 +14,8 @@ class CTSCustomerRun(Neo4jContext):
         #####################
         create_bulk = """
             UNWIND $batch as row
-            MERGE (n:CTSCustomer {CustID=toInteger(row.CustID), CustSubID = row.CustSubID})
-            ON CREATE SET n.CTSCustID = toInteger(row.CTSCustID)
+            MERGE (n:CTSCustomer {CustID: toInteger(row.CustID), CustSubID: toInteger(row.CustSubID)})
+            SET n.CTSCustID = toInteger(row.CTSCustID)
                 , n.RegisterName=row.RegisterName
                 , n.Username = row.UserName
                 , n.Username2 = row.UserName2
@@ -92,12 +92,11 @@ class CTSCustomerRun(Neo4jContext):
         #####################
         update_bulk = """
             UNWIND $batch as row
-            MERGE (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
-            ON MATCH SET n.CustID=row.CustID
-                , n.RegisterName=row.RegisterName
-                , n.Username=row.UserName
-                , n.Username2=row.UserName2
-                , n.CustSubID=row.CustSubID
+            MERGE (n:CTSCustomer {CustID: toInteger(row.CustID), CustSubID: toInteger(row.CustSubID)})
+            ON MATCH SET n.CTSCustID = toInteger(row.CTSCustID)
+                , n.RegisterName = row.RegisterName
+                , n.Username = row.UserName
+                , n.Username2 = row.UserName2
             RETURN ID(n) as NID
             """
         
