@@ -36,7 +36,7 @@ class CustEvidenceRun(Neo4jContext):
             WHERE row.Level = 0
             MERGE (n)-[r:HAS_EVIDENCE]->(c)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
-            WITH DISTINCT n
+            WITH DISTINCT n,r
             SET n:FlaggedCustomer
             RETURN ID(r) as RID
             """
