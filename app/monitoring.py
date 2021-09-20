@@ -39,6 +39,8 @@ def binlog_job():
     slave_gtid_executed = cts_shm[0]
     last_commit_time = datetime.strptime(cts_shm[1], '%Y-%m-%d %H:%M:%S')
     last_position = int(cts_shm[2])
+
+    log.info('Monitoring gets from memory: {0}-{1} {2}'.format(slave_gtid_executed,last_position,last_commit_time))
     
     if last_position > 0:
       if master_position != -1:

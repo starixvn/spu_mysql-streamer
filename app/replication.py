@@ -114,6 +114,7 @@ class StreamReplicator(object):
 				self.cts_shm[0] = self.last_commit_gtid
 				self.cts_shm[1] = self.last_commit_time.strftime('%Y-%m-%d %H:%M:%S')
 				self.cts_shm[2] = self.position
+				log.info('Set binlog info into memory: {0} {1} {2}'.format(self.cts_shm[0],self.cts_shm[1],self.cts_shm[2]))
 
 			except Exception as ex:
 				log.exception('%% Unhandle exception (%s write GTID failed): try again\n' %str(ex))

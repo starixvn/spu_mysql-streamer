@@ -103,6 +103,7 @@ class BinlogServer(object):
 					payload.message:
 
 					try:
+						log.info('Get binlog from MySQL - position {0} - time {1} '.format(payload.position, datetime.fromtimestamp(payload.timestamp)))
 						send_topic = '{0}{1}'.format('',payload.message.table).lower()
 						
 						# FORMAT message to Neo4j
