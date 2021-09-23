@@ -103,7 +103,7 @@ class BinlogServer(object):
 					payload.message:
 
 					try:
-						log.info('Get binlog from MySQL - position {0} - time {1} '.format(payload.position, datetime.fromtimestamp(payload.timestamp)))
+						log.info('CUD event - position {0} - time {1} '.format(payload.position, datetime.fromtimestamp(payload.timestamp)))
 						send_topic = '{0}{1}'.format('',payload.message.table).lower()
 						
 						# FORMAT message to Neo4j
@@ -123,10 +123,12 @@ class BinlogServer(object):
 				elif payload.evt_type == BINLOG.GTID_LOG_EVENT:
 					replicator.set_gtid_executed(payload.gtid)
 					replicator.commit_auto_position(payload.timestamp, payload.position)
+					log.info('GTID log event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))
 
 				elif payload.evt_type == BINLOG.HEARTBEAT_LOG_EVENT:
 					replicator.set_heartbeat(payload.binlog, payload.position)
 					replicator.commit_auto_position(payload.timestamp, payload.position)
+					log.info('Heart beat event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))
 				
 			self.binlog_stream.close()
 
