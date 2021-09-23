@@ -31,7 +31,7 @@ class CTSCustomerClassificationRun(Neo4jContext):
         batch = json.loads(raws)
         create_bulk = """
             UNWIND $batch as row
-            MERGE (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MERGE (n:CTSCustomer {CustID:toInteger(row.CustID), CustSubID:0})
             MERGE (c:CustomerCategory {CategoryID:row.CategoryID})
             MERGE (n)-[r:HAS_CATEGORY]->(c)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
@@ -51,7 +51,7 @@ class CTSCustomerClassificationRun(Neo4jContext):
         # remove relationship
         remove_relationship = """
             UNWIND $batch as row
-            MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MATCH (n:CTSCustomer {CustID:toInteger(row.CustID), CustSubID:0})
             MATCH (c:CustomerCategory {CategoryID:row.BeforeCategoryID})
             WHERE row.BeforeCategoryID <> row.CategoryID OR NOT EXISTS(row.CategoryID)
             MATCH (n)-[r:HAS_CATEGORY]-(c)
@@ -62,7 +62,7 @@ class CTSCustomerClassificationRun(Neo4jContext):
         # add relationship
         create_bulk = """
             UNWIND $batch as row
-            MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MATCH (n:CTSCustomer {CustID:toInteger(row.CustID), CustSubID:0})
             MATCH (c:CustomerCategory {CategoryID:row.CategoryID})
             WHERE row.BeforeCategoryID <> row.CategoryID
             MERGE (n)-[r:HAS_CATEGORY]-(c)
@@ -81,7 +81,7 @@ class CTSCustomerClassificationRun(Neo4jContext):
         # remove AIO
         remove_all = """
             UNWIND $batch as row
-            MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MATCH (n:CTSCustomer {CustID:toInteger(row.CustID), CustSubID:0})
             MATCH (c:CustomerCategory {CategoryID:row.CategoryID})
             MATCH (n)-[r:HAS_CATEGORY]-(c)
             DELETE r
@@ -91,15 +91,15 @@ class CTSCustomerClassificationRun(Neo4jContext):
     #binlog processing
     @classmethod
     def create_binlog(cls, tx, raws:list):
-        batch = [CustomerCategory(r["after"]["CTSCustID"],r["after"]["CategoryID"],r["after"]["CreatedDate"]) for r in raws]
+        batch = [CustomerCategory(r["after"]["CustID"],r["after"]["CategoryID"],r["after"]["CreatedDate"]) for r in raws]
         cls.create_batch(tx, batch)
 
     @classmethod
     def update_binlog(cls, tx, raws:list):
-        batch = [CustomerCategory(r["after"]["CTSCustID"],r["after"]["CategoryID"],r["after"]["CreatedDate"],r["before"]["CategoryID"]) for r in raws]
+        batch = [CustomerCategory(r["after"]["CustID"],r["after"]["CategoryID"],r["after"]["CreatedDate"],r["before"]["CategoryID"]) for r in raws]
         cls.update_batch(tx, batch)
 
     @classmethod
     def delete_binlog(cls, tx, raws:list):
-        batch = [CustomerCategory(r["before"]["CTSCustID"],r["before"]["CategoryID"]) for r in raws]
+        batch = [CustomerCategory(r["before"]["CustID"],r["before"]["CategoryID"]) for r in raws]
         cls.delete_batch(tx, batch)
