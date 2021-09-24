@@ -96,6 +96,11 @@ class BinlogServer(object):
 			print("connected. Listening for events... %s" %str(only_events_conf))
 			print("Starting at auto_position: {0}".format(auto_position_conf))
 
+			log.info("Connected. Listening for databases... %s" %str(only_schemas_conf))
+			log.info("Connected. Listening for tables... %s" %str(only_tables_conf))
+			log.info("connected. Listening for events... %s" %str(only_events_conf))
+			log.info("Starting at auto_position: {0}".format(auto_position_conf))
+
 			for evt in self.binlog_stream:
 				payload = build_message(evt)
 				

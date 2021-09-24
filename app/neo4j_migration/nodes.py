@@ -61,8 +61,8 @@ class StaticList(BaseNode):
         self.Status=status
 
 class CustomerCategory(BaseNode):
-    def __init__(self, CTSCustID,categoryID,createdDate=datetime.now().replace(microsecond=0).isoformat(),beforeCategoryID=None):
-        self.CTSCustID=CTSCustID
+    def __init__(self, custID,categoryID,createdDate=datetime.now().replace(microsecond=0).isoformat(),beforeCategoryID=None):
+        self.CustID=custID
         self.CategoryID=categoryID
         if createdDate is not None:
             createdDate=str(createdDate).replace(" ", "T")
