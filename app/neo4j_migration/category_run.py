@@ -32,8 +32,9 @@ class CustomerCategoryRun(Neo4jContext):
         create_bulk = """
             UNWIND $batch as row
             MERGE (n:CustomerCategory {CategoryID:row.CategoryID})
-            ON CREATE SET n.CategoryID=row.CategoryID
-                , n.CategoryName=row.CategoryName
+            ON CREATE SET n.CategoryID = row.CategoryID
+                , n.CategoryName = row.CategoryName
+                , n.ParentID = row.ParentID
             ON MATCH SET n.CategoryName=row.CategoryName
             RETURN ID(n) as NID
             """
@@ -51,7 +52,8 @@ class CustomerCategoryRun(Neo4jContext):
         update_bulk = """
             UNWIND $batch as row
             MERGE (n:CustomerCategory {CategoryID:row.CategoryID})
-            ON MATCH SET n.CategoryName=row.CategoryName
+            ON MATCH SET n.CategoryName = row.CategoryName
+                , n.ParentID = row.ParentID
             RETURN ID(n) as NID
             """
         
@@ -76,12 +78,12 @@ class CustomerCategoryRun(Neo4jContext):
     #binlog processing
     @classmethod
     def create_binlog(cls, tx, raws:list):
-        batch = [Category(r["after"]["CategoryID"],r["after"]["CategoryName"]) for r in raws]
+        batch = [Category(r["after"]["CategoryID"],r["after"]["CategoryName"],r["after"]["ParentID"]) for r in raws]
         cls.create_batch(tx, batch)
 
     @classmethod
     def update_binlog(cls, tx, raws:list):
-        batch = [Category(r["after"]["CategoryID"],r["after"]["CategoryName"]) for r in raws]
+        batch = [Category(r["after"]["CategoryID"],r["after"]["CategoryName"],r["after"]["ParentID"]) for r in raws]
         cls.update_batch(tx, batch)
 
     @classmethod

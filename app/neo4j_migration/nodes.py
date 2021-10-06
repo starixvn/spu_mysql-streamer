@@ -43,9 +43,10 @@ class Subscriber(BaseNode):
         self.SubscriberName=subscriberName
 
 class Category(BaseNode):
-    def __init__(self, categoryID, categoryName:None):
+    def __init__(self, categoryID, categoryName:None, parentID:None):
         self.CategoryID=categoryID
         self.CategoryName=categoryName
+        self.ParentID = parentID
 
 class Evidence(BaseNode):
     def __init__(self, evidenceID, evidenceName, evidenceCode):
@@ -54,14 +55,15 @@ class Evidence(BaseNode):
         self.EvidenceCode=evidenceCode
 
 class StaticList(BaseNode):
-    def __init__(self, listID, itemID, itemNameDisplay=None, status=None):
+    def __init__(self, listID, itemID, itemNameDisplay=None, status=None, priorityOrder=None):
         self.ListID=listID
         self.ItemID=itemID
         self.ItemNameDisplay=itemNameDisplay
         self.Status=status
+        self.PriorityOrder=priorityOrder
 
 class CustomerCategory(BaseNode):
-    def __init__(self, custID,categoryID,createdDate=datetime.now().replace(microsecond=0).isoformat(),beforeCategoryID=None):
+    def __init__(self, custID, categoryID, createdDate=datetime.now().replace(microsecond=0).isoformat(), beforeCategoryID=None):
         self.CustID=custID
         self.CategoryID=categoryID
         if createdDate is not None:
