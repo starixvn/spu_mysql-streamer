@@ -19,7 +19,7 @@ class MessageEncoder(json.JSONEncoder):
         # Let the base class default method raise the TypeError
         return json.JSONEncoder.default(self, obj)
 
-class BuildMessage(object):
+class BuildMessage(MessageEncoder):
 	def __init__(self, schema, table, op=None):
 		self.rows = []
 		self.schema = schema

@@ -4,6 +4,7 @@ import os
 import json
 import time
 import socket
+import pika
 from datetime import datetime, date
 from decimal import Decimal
 
@@ -76,6 +77,11 @@ class BinlogServer(object):
 				,'passwd': self.mysql['passwd']
 			}
 
+		# Connect to RabbitMQ
+		connection = pika.BlockingConnection(pika.ConnectionParameters('10.18.200.73'))
+		channel = connection.channel()
+		channel.queue_declare(queue='mysql-streamer')
+
 		try:
 		
 			self.binlog_stream = BinLogStreamReader(connection_settings = mysql_settings
@@ -110,32 +116,39 @@ class BinlogServer(object):
 					try:
 						log.info('CUD event - position {0} - time {1} '.format(payload.position, datetime.fromtimestamp(payload.timestamp)))
 						send_topic = '{0}{1}'.format('',payload.message.table).lower()
+						messsage = json.dumps(payload.message, cls=MessageEncoder)
+						channel.basic_publish(exchange='', routing_key='mysql-streamer', body=messsage)
 						
 						# FORMAT message to Neo4j
-						mapper = Neo4jMessageMapper(payload)
-						response = mapper.sync()
+						#mapper = Neo4jMessageMapper(payload)
+						#response = mapper.sync()
 
 						replicator.commit_auto_position(payload.timestamp, payload.position)
 						log.info('proceed message: {0} at {1}. op: {2}. rows {3}'.format(send_topic, datetime.fromtimestamp(payload.timestamp),payload.message.op,len(payload.message.rows)))
 
 					except BufferError as bex:
+						print('%% Local producer queue is full (%s messages awaiting delivery): try again\n' %str(bex))
 						log.error('%% Local producer queue is full (%s messages awaiting delivery): try again\n' %str(bex))
 
 					except Exception as ex:
+						print('%% Unhandle exception (%s messages failed delivery): try again\n' %str(ex))
 						log.exception('%% Unhandle exception (%s messages failed delivery): try again\n' %str(ex))
 						time.sleep(1)
 
 				elif payload.evt_type == BINLOG.GTID_LOG_EVENT:
+					channel.basic_publish(exchange='', routing_key='mysql-streamer', body='hello world')
 					replicator.set_gtid_executed(payload.gtid)
 					replicator.commit_auto_position(payload.timestamp, payload.position)
 					log.info('GTID log event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))
 
 				elif payload.evt_type == BINLOG.HEARTBEAT_LOG_EVENT:
+					channel.basic_publish(exchange='', routing_key='mysql-streamer', body='hello world')
 					replicator.set_heartbeat(payload.binlog, payload.position)
 					replicator.commit_auto_position(payload.timestamp, payload.position)
 					log.info('Heart beat event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))
 				
 			self.binlog_stream.close()
+			connection.close()
 
 		except Exception as ex:
 			print('%% Unhandle exception (%s MySQL Streamer connect failed): try again\n' %str(ex))
@@ -143,3 +156,4 @@ class BinlogServer(object):
 	def stop(self):
 		if self.binlog_stream:
 			self.binlog_stream.close()
+			connection.close()
