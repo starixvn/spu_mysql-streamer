@@ -116,7 +116,7 @@ class BinlogServer(object):
 					try:
 						log.info('CUD event - position {0} - time {1} '.format(payload.position, datetime.fromtimestamp(payload.timestamp)))
 						send_topic = '{0}{1}'.format('',payload.message.table).lower()
-						messsage = json.dumps(payload.message, cls=MessageEncoder)
+						messsage = json.dumps(payload, cls=MessageEncoder)
 						channel.basic_publish(exchange='', routing_key='mysql-streamer', body=messsage)
 						
 						# FORMAT message to Neo4j

@@ -1,25 +1,32 @@
 import sys
-from datetime import datetime
+from datetime import datetime, date
 import json
 from multiprocessing import shared_memory
 from app_logging import logging as log
 from app_const import CONF_PATH
 
 def datetime_handler(x):
-    if isinstance(x, datetime):
+    if isinstance(x, (date, datetime)):
         return x.isoformat()
-    raise TypeError("Unknown type")
+    return json.JSONEncoder.default(x)
 
 
 class MessageEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, BuildMessage):
-            return obj.__dict__
+	def default(self, obj):
+		if isinstance(obj, (date, datetime)):
+			return obj.isoformat()
 
+		if isinstance(obj, BuildMessage):
+			return obj.__dict__
+
+		if isinstance(obj, BuildPayload):
+			return obj.__dict__
+
+		return json.JSONEncoder.default(self, obj)
         # Let the base class default method raise the TypeError
-        return json.JSONEncoder.default(self, obj)
+        #return json.JSONEncoder.default(self, obj)
 
-class BuildMessage(MessageEncoder):
+class BuildMessage(json.JSONEncoder):
 	def __init__(self, schema, table, op=None):
 		self.rows = []
 		self.schema = schema
@@ -27,7 +34,7 @@ class BuildMessage(MessageEncoder):
 		self.op = op
 	
 
-class BuildPayload(object):
+class BuildPayload(json.JSONEncoder):
 	def __init__(self, evt_type, gtid=None, message:BuildMessage=None, position=None, timestamp:int=0, binlog=None):
 		self.evt_type = evt_type
 		self.gtid = gtid
