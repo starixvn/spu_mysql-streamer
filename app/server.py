@@ -15,6 +15,8 @@ class BinlogFactory:
     def process(act, mode):
         if act == 'start':
             BinlogFactory.binlog.start(mode)
+        elif act == 'read-from-queue':
+            BinlogFactory.binlog.read_message_from_queue()
         elif act == 'stop':
             BinlogFactory.binlog.stop()
 

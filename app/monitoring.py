@@ -167,7 +167,11 @@ schedule.every(5).minutes.do(binlog_job)
 #
 #
 def run_monitoring(thread_name, delay):
-    log.info('Multiplethreading %s.' %str(thread_name))
+    try:
+        log.info('Multiplethreading %s.' %str(thread_name))
+    except Exception as ex:
+        print(str(ex))
+    
     while True:
         schedule.run_pending()
         time.sleep(delay)

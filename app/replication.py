@@ -26,13 +26,38 @@ class MessageEncoder(json.JSONEncoder):
         # Let the base class default method raise the TypeError
         #return json.JSONEncoder.default(self, obj)
 
+class BuildMessageReceiver(json.JSONEncoder):
+	def __init__(self, rows, schema, table, op=None):
+		self.rows = rows
+		self.schema = schema
+		self.table = table
+		self.op = op
+
+class BuildPayloadReceiver(json.JSONEncoder):
+	def __init__(self, evt_type, gtid=None, message=None, position=None, timestamp:int=0, binlog=None):
+		self.evt_type = evt_type
+		self.gtid = gtid
+		if message is not None:
+			self.message = BuildMessageReceiver(**message)
+		elif message is None:
+			self.message = None
+
+		self.binlog = binlog
+		self.position = position
+		self.timestamp = timestamp
+
+	@property
+	def data(self):
+		if self.message:
+			return self.message.rows
+		return []
+
 class BuildMessage(json.JSONEncoder):
 	def __init__(self, schema, table, op=None):
 		self.rows = []
 		self.schema = schema
 		self.table = table
 		self.op = op
-	
 
 class BuildPayload(json.JSONEncoder):
 	def __init__(self, evt_type, gtid=None, message:BuildMessage=None, position=None, timestamp:int=0, binlog=None):

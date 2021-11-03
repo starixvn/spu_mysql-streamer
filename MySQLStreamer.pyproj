@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{038e2c95-bc0c-4be4-8558-c63943a22de9}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>app\main.py</StartupFile>
+    <StartupFile>app\main_receiver.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -28,7 +28,8 @@
     <Compile Include="app\app_logging.py" />
     <Compile Include="app\binlog_mapper_run.py" />
     <Compile Include="app\configuration.py" />
-    <Compile Include="app\main.py" />
+    <Compile Include="app\main_receiver.py" />
+    <Compile Include="app\main_sender.py" />
     <Compile Include="app\messaging.py" />
     <Compile Include="app\monitoring.py" />
     <Compile Include="app\neo4j_collection.py" />

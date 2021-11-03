@@ -34,6 +34,7 @@ from replication import (
 	StreamReplicator,
 	BuildPayload,
 	BuildMessage,
+	BuildPayloadReceiver,
 	MessageEncoder,
 	datetime_handler
 )
@@ -102,26 +103,43 @@ class BinlogServer(object):
 			print("connected. Listening for events... %s" %str(only_events_conf))
 			print("Starting at auto_position: {0}".format(auto_position_conf))
 
-			log.info("Connected. Listening for databases... %s" %str(only_schemas_conf))
-			log.info("Connected. Listening for tables... %s" %str(only_tables_conf))
-			log.info("connected. Listening for events... %s" %str(only_events_conf))
-			log.info("Starting at auto_position: {0}".format(auto_position_conf))
-
 			for evt in self.binlog_stream:
 				payload = build_message(evt)
+				messsage = json.dumps(payload, cls=MessageEncoder)
+				channel.basic_publish(exchange='', routing_key='mysql-streamer', body=messsage)
 				
+			self.binlog_stream.close()
+			connection.close()
+
+		except Exception as ex:
+			print('%% Unhandle exception (%s MySQL Streamer connect failed): try again\n' %str(ex))
+
+	def stop(self):
+		if self.binlog_stream:
+			self.binlog_stream.close()
+			connection.close()
+
+	def read_message_from_queue(self):
+		try:
+			connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.18.200.73'))
+			channel = connection.channel()
+
+			channel.queue_declare(queue='mysql-streamer')
+			replicator = StreamReplicator(self.mysql)
+
+			def callback(ch, method, properties, body):
+				messsage = json.loads(body)
+				payload = BuildPayloadReceiver(**messsage)
 				if payload.evt_type in [BINLOG.UPDATE_ROWS_EVENT_V2, BINLOG.WRITE_ROWS_EVENT_V2, BINLOG.DELETE_ROWS_EVENT_V2] and \
 					payload.message:
 
 					try:
 						log.info('CUD event - position {0} - time {1} '.format(payload.position, datetime.fromtimestamp(payload.timestamp)))
 						send_topic = '{0}{1}'.format('',payload.message.table).lower()
-						messsage = json.dumps(payload, cls=MessageEncoder)
-						channel.basic_publish(exchange='', routing_key='mysql-streamer', body=messsage)
 						
 						# FORMAT message to Neo4j
-						#mapper = Neo4jMessageMapper(payload)
-						#response = mapper.sync()
+						mapper = Neo4jMessageMapper(payload)
+						response = mapper.sync()
 
 						replicator.commit_auto_position(payload.timestamp, payload.position)
 						log.info('proceed message: {0} at {1}. op: {2}. rows {3}'.format(send_topic, datetime.fromtimestamp(payload.timestamp),payload.message.op,len(payload.message.rows)))
@@ -136,24 +154,18 @@ class BinlogServer(object):
 						time.sleep(1)
 
 				elif payload.evt_type == BINLOG.GTID_LOG_EVENT:
-					channel.basic_publish(exchange='', routing_key='mysql-streamer', body='hello world')
 					replicator.set_gtid_executed(payload.gtid)
 					replicator.commit_auto_position(payload.timestamp, payload.position)
 					log.info('GTID log event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))
 
 				elif payload.evt_type == BINLOG.HEARTBEAT_LOG_EVENT:
-					channel.basic_publish(exchange='', routing_key='mysql-streamer', body='hello world')
 					replicator.set_heartbeat(payload.binlog, payload.position)
 					replicator.commit_auto_position(payload.timestamp, payload.position)
 					log.info('Heart beat event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))
-				
-			self.binlog_stream.close()
-			connection.close()
+
+			channel.basic_consume(queue='mysql-streamer', on_message_callback=callback, auto_ack=True)		
+			channel.start_consuming()
 
 		except Exception as ex:
-			print('%% Unhandle exception (%s MySQL Streamer connect failed): try again\n' %str(ex))
-
-	def stop(self):
-		if self.binlog_stream:
-			self.binlog_stream.close()
-			connection.close()
+			#print('%% Unhandle exception (%s MySQL Streamer connect failed): try again\n' %str(ex))
+			print(str(ex))
