@@ -43,8 +43,8 @@ class CTSCustomerRun(Neo4jContext):
         #HAS_STATUS
         has_status = """
             UNWIND $batch as row
-            MERGE (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
-            MERGE (s:StaticList {ItemID:row.CustStatusID, ListID: 1})
+            MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MATCH (s:StaticList {ItemID:row.CustStatusID, ListID: 1})
             MERGE (n)-[r:HAS_STATUS]-(s)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
             RETURN ID(r) AS RID
@@ -92,8 +92,8 @@ class CTSCustomerRun(Neo4jContext):
         #####################
         update_bulk = """
             UNWIND $batch as row
-            MERGE (n:CTSCustomer {CustID: toInteger(row.CustID), CustSubID: toInteger(row.CustSubID)})
-            ON MATCH SET n.CTSCustID = toInteger(row.CTSCustID)
+            MATCH (n:CTSCustomer {CustID: toInteger(row.CustID), CustSubID: toInteger(row.CustSubID)})
+            SET n.CTSCustID = toInteger(row.CTSCustID)
                 , n.RegisterName = row.RegisterName
                 , n.Username = row.UserName
                 , n.Username2 = row.UserName2

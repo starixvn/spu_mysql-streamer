@@ -42,7 +42,6 @@
     <Compile Include="app\neo4j_migration\ctscustomer_run.py" />
     <Compile Include="app\neo4j_migration\customer_classification_run.py" />
     <Compile Include="app\neo4j_migration\customer_evidence_run.py" />
-    <Compile Include="app\neo4j_migration\customer_run.py" />
     <Compile Include="app\neo4j_migration\evidence_run.py" />
     <Compile Include="app\neo4j_migration\model_bootstrap.py" />
     <Compile Include="app\neo4j_migration\model_unitest.py" />
