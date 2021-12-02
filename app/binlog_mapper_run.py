@@ -42,6 +42,7 @@ from replication import (
 from messaging import build_message
 from app_logging import logging as log
 from replicate_to_neo4j import Neo4jMessageMapper
+from pymysql import connect
 
 class BinlogServer(object):
 	def __init__(self, mysql_conf, repl_conf):
@@ -77,6 +78,15 @@ class BinlogServer(object):
 				,'user': self.mysql['user']
 				,'passwd': self.mysql['passwd']
 			}
+
+		# Get current position from db
+		conn = connect(**mysql_settings)
+		get_current_pos_cmd = "select gtid_executed FROM MonDB.neo4j_replication_status order by id desc limit 1;"
+		cur = conn.cursor()
+		cur.execute(get_current_pos_cmd)
+		gtid_from_db = cur.fetchone()
+		master_position = gtid_from_db[0].split(':');
+		auto_position_conf = '{uuid}:1-{pos}'.format(uuid=master_position[0], pos=master_position[1])
 
 		# Connect to RabbitMQ
 		connection = pika.BlockingConnection(pika.ConnectionParameters('10.18.200.73'))
