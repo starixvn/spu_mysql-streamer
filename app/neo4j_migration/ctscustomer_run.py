@@ -138,6 +138,6 @@ class CTSCustomerRun(Neo4jContext):
         remove_all = """
             UNWIND $batch as row
             MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
-            DETACH DELETE n
+            SET n:ArchivedCustomer
             """
         tx.run(remove_all, batch = before)

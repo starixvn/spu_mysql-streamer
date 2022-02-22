@@ -32,7 +32,7 @@ class AssociationByDeviceRun(Neo4jContext):
             UNWIND $batch as row
             MATCH (c:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
             MATCH (n:Device {DeviceID:toInteger(row.DeviceID)})
-            MERGE (c)-[r:USED_DEVICE]-(n)
+            MERGE (c)-[r:USED_DEVICE]->(n)
             ON CREATE SET r.CreatedDate = datetime(row.CreatedDate)
             RETURN ID(r) AS RID
             """

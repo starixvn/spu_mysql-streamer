@@ -35,7 +35,7 @@ class AssociationByManualRun(Neo4jContext):
                     MATCH (f:CTSCustomer {CTSCustID:toInteger(row.FromCTSCustID)})
                     MATCH (t:CTSCustomer {CTSCustID:toInteger(row.ToCTSCustID)})
                     WHERE row.FromCTSCustID <> row.ToCTSCustID
-                    MERGE (f)-[r:ADD_MANUALLY]-(t)
+                    MERGE (f)-[r:ADD_MANUALLY]->(t)
                     ON CREATE set r.CreatedDate=datetime(row.CreatedDate)
                     RETURN ID(r) as NID
                 """

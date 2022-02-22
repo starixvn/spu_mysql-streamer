@@ -34,7 +34,7 @@ class AssociationRemoveRun(Neo4jContext):
                     UNWIND $batch as row
                     MATCH (f:CTSCustomer {CTSCustID:toInteger(row.FromCTSCustID)})
                     MATCH (t:CTSCustomer {CTSCustID:toInteger(row.ToCTSCustID)})
-                    MERGE (f)-[r:HAS_EXCEPTION]-(t)
+                    MERGE (f)-[r:HAS_EXCEPTION]->(t)
                     ON CREATE set r.CreatedDate=datetime(row.CreatedDate)
                     RETURN ID(r) as RID
                 """
