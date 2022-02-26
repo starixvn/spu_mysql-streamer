@@ -5,6 +5,8 @@ import json
 import time
 import socket
 import pika
+import functools
+import threading
 from datetime import datetime, date
 from decimal import Decimal
 
@@ -131,15 +133,34 @@ class BinlogServer(object):
 
 	def read_message_from_queue(self):
 		try:
-			connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.18.200.73'))
+			connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.18.200.73', heartbeat=5))
 			channel = connection.channel()
 
 			channel.queue_declare(queue='mysql-streamer')
 			replicator = StreamReplicator(self.mysql)
 
-			def callback(ch, method, properties, body):
+			def ack_message(ch, delivery_tag):
+				"""Note that `ch` must be the same pika channel instance via which
+				the message being ACKed was retrieved (AMQP protocol constraint).
+				"""
+				if ch.is_open:
+					ch.basic_ack(delivery_tag)
+				else:
+					# Channel is already closed, so we can't ACK this message;
+					# log and/or do something that makes sense for your app in this case.
+					pass
+
+			def on_message(ch, method_frame, _header_frame, body, args):
+				(conn, thrds) = args
+				delivery_tag = method_frame.delivery_tag
+				t = threading.Thread(target=handle_message, args=(conn, ch, delivery_tag, body))
+				t.start()
+				thrds.append(t)
+
+			def handle_message(conn, ch, delivery_tag, body):
 				messsage = json.loads(body)
 				payload = BuildPayloadReceiver(**messsage)
+				
 				if payload.evt_type in [BINLOG.UPDATE_ROWS_EVENT_V2, BINLOG.WRITE_ROWS_EVENT_V2, BINLOG.DELETE_ROWS_EVENT_V2] and \
 					payload.message:
 
@@ -171,9 +192,14 @@ class BinlogServer(object):
 				elif payload.evt_type == BINLOG.HEARTBEAT_LOG_EVENT:
 					replicator.set_heartbeat(payload.binlog, payload.position)
 					replicator.commit_auto_position(payload.timestamp, payload.position)
-					log.info('Heart beat event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))
+					log.info('Heart beat event - type {0} - GTID {1} - position {2} - time {3} '.format(payload.evt_type, payload.gtid, payload.position, datetime.fromtimestamp(payload.timestamp)))	
 
-			channel.basic_consume(queue='mysql-streamer', on_message_callback=callback, auto_ack=True)		
+				cb = functools.partial(ack_message, ch, delivery_tag)
+				conn.add_callback_threadsafe(cb)
+
+			threads = []
+			on_message_callback = functools.partial(on_message, args=(connection, threads))
+			channel.basic_consume('mysql-streamer', on_message_callback)
 			channel.start_consuming()
 
 		except Exception as ex:

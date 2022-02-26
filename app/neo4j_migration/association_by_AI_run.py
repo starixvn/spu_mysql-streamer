@@ -34,7 +34,7 @@ class AssociationByAIRun(Neo4jContext):
                     UNWIND $batch as row
                     MERGE (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
                     MERGE (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
-                    MERGE (f)-[r:ASS_BY_AI]-(t)
+                    MERGE (f)-[r:ASS_BY_AI]->(t)
                     ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
                     RETURN ID(r) as NID
                 """
@@ -55,7 +55,7 @@ class AssociationByAIRun(Neo4jContext):
                     MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
                     MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
                     WHERE row.FromCustID <> row.ToCustID
-                    MERGE (f)-[r:ASS_BY_AI]-(t)
+                    MERGE (f)-[r:ASS_BY_AI]->(t)
                     ON MATCH SET r.CreatedDate=datetime(row.CreatedDate)
                     RETURN ID(r) as NID
                 """
@@ -75,7 +75,7 @@ class AssociationByAIRun(Neo4jContext):
                 UNWIND $batch as row
                 MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
                 MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
-                MERGE (f)-[r:ASS_BY_AI]-(t)
+                MERGE (f)-[r:ASS_BY_AI]->(t)
                 DELETE r
                """
         tx.run(remove_all, batch=batch)

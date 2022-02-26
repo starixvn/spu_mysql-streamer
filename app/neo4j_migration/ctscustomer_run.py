@@ -45,7 +45,7 @@ class CTSCustomerRun(Neo4jContext):
             UNWIND $batch as row
             MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
             MATCH (s:StaticList {ItemID:row.CustStatusID, ListID: 1})
-            MERGE (n)-[r:HAS_STATUS]-(s)
+            MERGE (n)-[r:HAS_STATUS]->(s)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
             RETURN ID(r) AS RID
             """
