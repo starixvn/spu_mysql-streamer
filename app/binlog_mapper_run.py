@@ -133,7 +133,7 @@ class BinlogServer(object):
 
 	def read_message_from_queue(self):
 		try:
-			connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.18.200.73', heartbeat=5))
+			connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.18.200.73'))
 			channel = connection.channel()
 
 			channel.queue_declare(queue='mysql-streamer')
@@ -197,10 +197,14 @@ class BinlogServer(object):
 				cb = functools.partial(ack_message, ch, delivery_tag)
 				conn.add_callback_threadsafe(cb)
 
+			channel.basic_qos(prefetch_count=1)
 			threads = []
 			on_message_callback = functools.partial(on_message, args=(connection, threads))
 			channel.basic_consume('mysql-streamer', on_message_callback)
 			channel.start_consuming()
+
+			for thread in threads:
+				thread.join()
 
 		except Exception as ex:
 			#print('%% Unhandle exception (%s MySQL Streamer connect failed): try again\n' %str(ex))
