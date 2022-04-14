@@ -31,8 +31,8 @@ class CustEvidenceRun(Neo4jContext):
         batch = json.loads(raws)
         create_bulk = """
             UNWIND $batch as row
-            MATCH (n:CTSCustomer {CTSCustID:row.CTSCustID})
-            MATCH (c:Evidence {EvidenceID:row.EvidenceID})
+            MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MATCH (c:Evidence {EvidenceID:toInteger(row.EvidenceID)})
             WHERE row.Level = 0
             MERGE (n)-[r:HAS_EVIDENCE]->(c)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)

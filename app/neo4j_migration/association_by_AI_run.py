@@ -75,7 +75,7 @@ class AssociationByAIRun(Neo4jContext):
                 UNWIND $batch as row
                 MATCH (f:CTSCustomer {CustID:toInteger(row.FromCustID), CustSubID: 0})
                 MATCH (t:CTSCustomer {CustID:toInteger(row.ToCustID), CustSubID: 0})
-                MERGE (f)-[r:ASS_BY_AI]->(t)
+                MATCH (f)-[r:ASS_BY_AI]->(t)
                 DELETE r
                """
         tx.run(remove_all, batch=batch)
