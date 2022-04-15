@@ -33,6 +33,7 @@
     <Compile Include="app\messaging.py" />
     <Compile Include="app\monitoring.py" />
     <Compile Include="app\neo4j_collection.py" />
+    <Compile Include="app\neo4j_migration\association_group_by_AI_run.py" />
     <Compile Include="app\neo4j_migration\association_by_IP_run.py" />
     <Compile Include="app\neo4j_migration\association_device_run.py" />
     <Compile Include="app\neo4j_migration\association_by_AI_run.py" />
