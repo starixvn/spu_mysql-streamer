@@ -76,10 +76,12 @@ class HAS_EXCEPTION(object):
         self.CreatedDate=createdDate
 
 class GROUP_BY_AI(object):
-    def __init__(self, custID, newGroupID, oldGroupID, createdDate=datetime.now().replace(microsecond=0).isoformat()):
+    def __init__(self, custID, newGroupID, oldGroupID, newOriginGroupID, oldOriginGroupID, createdDate=datetime.now().replace(microsecond=0).isoformat()):
         self.CustID=custID
         self.NewGroupID=newGroupID
         self.OldGroupID=oldGroupID
+        self.NewOriginGroupID=newOriginGroupID
+        self.OldOriginGroupID=oldOriginGroupID
         if createdDate is not None:
             createdDate=str(createdDate).replace(" ", "T")
         self.CreatedDate=createdDate
