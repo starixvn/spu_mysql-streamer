@@ -30,6 +30,6 @@ class Neo4jMessageMapper(object):
             sync_rs = runner_call(self.rows)
 
         except Exception as ex:
-            sys.stderr.write('Unhandle exception ({0} - Neo4jMessageMapper mapping failed: {1}): try again\n'.format(self.table, str(ex)))
+            raise Exception('Unhandle exception ({0} - Neo4jMessageMapper mapping failed: {1}): try again\n'.format(self.table, str(ex)))
 
         return sync_rs

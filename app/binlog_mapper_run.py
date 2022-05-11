@@ -182,6 +182,14 @@ class BinlogServer(object):
 					except Exception as ex:
 						print('%% Unhandle exception (%s messages failed delivery): try again\n' %str(ex))
 						log.exception('%% Unhandle exception (%s messages failed delivery): try again\n' %str(ex))
+
+						# Connect to RabbitMQ
+						connectionOnError = pika.BlockingConnection(pika.ConnectionParameters('10.18.200.73'))
+						channelOnError = connectionOnError.channel()
+						channelOnError.queue_declare(queue='mysql-streamer-error')
+						
+						channel.basic_publish(exchange='', routing_key='mysql-streamer-error', body=body)
+						raise Exception('There is an error in Replication')
 						time.sleep(1)
 
 				elif payload.evt_type == BINLOG.GTID_LOG_EVENT:
@@ -209,3 +217,4 @@ class BinlogServer(object):
 		except Exception as ex:
 			#print('%% Unhandle exception (%s MySQL Streamer connect failed): try again\n' %str(ex))
 			print(str(ex))
+			raise Exception('There is an error in Replication')
