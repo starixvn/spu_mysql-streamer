@@ -30,8 +30,7 @@ class SubscriberRun(Neo4jContext):
         create_bulk = """
             UNWIND $batch as row
             MERGE (n:Subscriber {SubscriberID:row.SubscriberID})
-            ON CREATE SET n.SubscriberID=row.SubscriberID
-                , n.SubscriberName=row.SubscriberName
+            ON CREATE SET n.SubscriberName=row.SubscriberName
             ON MATCH SET n.SubscriberName=row.SubscriberName
             RETURN ID(n) as NID
             """

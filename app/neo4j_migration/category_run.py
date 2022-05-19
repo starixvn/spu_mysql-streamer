@@ -32,8 +32,7 @@ class CustomerCategoryRun(Neo4jContext):
         create_bulk = """
             UNWIND $batch as row
             MERGE (n:CustomerCategory {CategoryID:row.CategoryID})
-            ON CREATE SET n.CategoryID = row.CategoryID
-                , n.CategoryName = row.CategoryName
+            ON CREATE SET n.CategoryName = row.CategoryName
                 , n.ParentID = row.ParentID
             ON MATCH SET n.CategoryName=row.CategoryName
             RETURN ID(n) as NID

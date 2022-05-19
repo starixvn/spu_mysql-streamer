@@ -156,7 +156,7 @@ def neo4j_job():
 
 
 
-schedule.every(5).minutes.do(binlog_job)
+schedule.every(3).minutes.do(binlog_job)
 #chedule.every(1).minutes.do(neo4j_job)
 #schedule.every().hour.do(job)
 #schedule.every().day.at("10:30").do(job)
