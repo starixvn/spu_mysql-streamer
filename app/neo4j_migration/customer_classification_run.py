@@ -13,7 +13,7 @@ class CTSCustomerClassificationRun(Neo4jContext):
     def single_query(cls, tx, CTSCustID:int, categoryID:int):
         select_query = """
                 MATCH (n:CTSCustomer {CTSCustID:$CTSCustID})-[r:HAS_CATEGORY]-(c:CustomerCategory {CategoryID:$CategoryID})
-                RETURN n.Username AS Username, c.CategoryName AS CategoryName, r.CreatedDate as CreatedDate
+                RETURN n.UserName AS UserName, c.CategoryName AS CategoryName, r.CreatedDate as CreatedDate
                 """
 
         result = tx.run(select_query, CTSCustID=CTSCustID, CategoryID=categoryID)

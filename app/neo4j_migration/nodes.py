@@ -16,8 +16,8 @@ class CTSCustomer(BaseNode):
         self.CTSCustID=CTSCustID
         self.CustID=custID
         self.RegisterName=registerName
-        self.Username=username
-        self.Username2=username2
+        self.UserName=username
+        self.UserName2=username2
         self.SubscriberID=subscriberID
         self.CustSubID=custSubID
         if createdDate is not None:

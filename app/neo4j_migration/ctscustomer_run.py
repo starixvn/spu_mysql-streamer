@@ -17,8 +17,8 @@ class CTSCustomerRun(Neo4jContext):
             MERGE (n:CTSCustomer {CustID: toInteger(row.CustID), CustSubID: toInteger(row.CustSubID)})
             SET n.CTSCustID = toInteger(row.CTSCustID)
                 , n.RegisterName=row.RegisterName
-                , n.Username = row.UserName
-                , n.Username2 = row.UserName2
+                , n.UserName = row.UserName
+                , n.UserName2 = row.UserName2
             RETURN ID(n) as NID
             """
         
@@ -95,8 +95,8 @@ class CTSCustomerRun(Neo4jContext):
             MATCH (n:CTSCustomer {CustID: toInteger(row.CustID), CustSubID: toInteger(row.CustSubID)})
             SET n.CTSCustID = toInteger(row.CTSCustID)
                 , n.RegisterName = row.RegisterName
-                , n.Username = row.UserName
-                , n.Username2 = row.UserName2
+                , n.UserName = row.UserName
+                , n.UserName2 = row.UserName2
             RETURN ID(n) as NID
             """
         
