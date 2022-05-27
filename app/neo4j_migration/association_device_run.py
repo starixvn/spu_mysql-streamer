@@ -74,6 +74,11 @@ class AssociationByDeviceRun(Neo4jContext):
             MATCH (c:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
             MATCH (c)-[r:USED_DEVICE]->(n)
             DELETE r
+            WITH n
+            OPTIONAL MATCH (n)-[r:USED_DEVICE]-(:CTSCustomer)
+            WITH COUNT(r) AS Quantity, n
+            WHERE Quantity = 0
+            DELETE n
             """
         tx.run(remove_all,batch=batch)
 
