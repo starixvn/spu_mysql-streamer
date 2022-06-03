@@ -18,4 +18,4 @@ COPY ./app/ /app/
 RUN mkdir /logs \
 	&& chmod 777 /logs
 
-CMD [ "python", "/app/main.py", "start" ]
+CMD [ "python", "/app/main_receiver.py", "start" ]

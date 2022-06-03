@@ -33,8 +33,6 @@ def binlog_job():
         log.exception('%% Unhandle exception (%s mysql-source connect failed): try again\n' %str(ex))
     
     cts_shm = shared_memory.ShareableList(name='cts_shm')
-    #print('datetime.now(): %s' %str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-    #print(cts_shm);
 
     slave_gtid_executed = cts_shm[0]
     last_commit_time = datetime.strptime(cts_shm[1], '%Y-%m-%d %H:%M:%S')
@@ -50,8 +48,7 @@ def binlog_job():
           second_behind_master = (datetime.now().replace(microsecond=0) - last_commit_time).total_seconds()
   
       # write file
-      #write_gtid_file='{0}/auto-gtid.txt'.format(CONF_PATH)
-      write_gtid_file='D:/Work/CTS/MySQL-Streamer/conf/auto-gtid.txt'.format(CONF_PATH)
+      write_gtid_file='{0}/auto-gtid.txt'.format(CONF_PATH)
       with open(write_gtid_file,'w+') as auto_file:
           auto_file.write('{0}\t{1}\t{2}'.format(slave_gtid_executed, last_commit_time, last_position))
           auto_file.close()
@@ -156,7 +153,7 @@ def neo4j_job():
 
 
 
-schedule.every(3).minutes.do(binlog_job)
+schedule.every(1).minutes.do(binlog_job)
 #chedule.every(1).minutes.do(neo4j_job)
 #schedule.every().hour.do(job)
 #schedule.every().day.at("10:30").do(job)

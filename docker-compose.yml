@@ -1,17 +1,33 @@
 version: '3.7'
 services:
-  mysql-streamer:
+  rabbitmq:
+    image: rabbitmq:3.9.7-management
+    hostname: rabbitmq-neo4j-repl
+    container_name: rabbitmq-neo4j-repl
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - /volumes/cts-rabbitmq/data/:/var/lib/rabbitmq:rw
+        - /volumes/cts-rabbitmq/log/:/var/log/rabbitmq:rw
+    restart: always
+    networks:
+      app_network:
+        aliases:
+          - rabbitmq-neo4j-repl
+
+  mysql-streamer-sender:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-sender
       args:
         PYTHON_TAG: ${PYTHON_TAG}
-    hostname: ${CONNECTOR_HOST}
-    container_name: ${CONNECTOR_HOST}
+    hostname: ${CONNECTOR_SENDER_HOST}
+    container_name: ${CONNECTOR_SENDER_HOST}
     restart: always
     volumes:
-      - ${CONNECTOR_CONF}:/app/conf/:rw
-      - ${CONNECTOR_LOGS}:/logs:rw
+      - ${CONNECTOR_SENDER_CONF}:/app/conf/:rw
+      - ${CONNECTOR_SENDER_LOGS}:/logs:rw
     environment:
       PYTHON_VERSION: ${PYTHON_TAG}
       PYTHONUNBUFFERED: ${PYTHON_UNBUFFERED}
@@ -23,11 +39,44 @@ services:
     networks:
       app_network:
         aliases:
-          - ${CONNECTOR_HOST}
+          - ${CONNECTOR_SENDER_HOST}
+  
+  mysql-streamer-receiver:
+    build:
+      context: .
+      dockerfile: Dockerfile-receiver
+      args:
+        PYTHON_TAG: ${PYTHON_TAG}
+    hostname: ${CONNECTOR_RECEIVER_HOST}
+    container_name: ${CONNECTOR_RECEIVER_HOST}
+    restart: always
+    volumes:
+      - ${CONNECTOR_RECEIVER_SENDER_CONF}:/app/conf/:rw
+      - ${CONNECTOR_RECEIVER_SENDER_LOGS}:/logs:rw
+    environment:
+      PYTHON_VERSION: ${PYTHON_TAG}
+      PYTHONUNBUFFERED: ${PYTHON_UNBUFFERED}
+      TZ: ${CONNECTOR_TZ}
+
+    env_file:
+      - streamer.env
+
+    networks:
+      app_network:
+        aliases:
+          - ${CONNECTOR_SENDER_HOST}
+	  mysql_network:
+        aliases:
+          - ${CONNECTOR_SENDER_HOST}
 
 networks:
   app_network:
     external: ${NETWORK_EXTERNAL}
     name: ${NETWORK_NAME}
     driver: ${NETWORK_DRIVER}
+  mysql_network:
+    external: ${NETWORK_EXTERNAL}
+    name: ${MYSQL_NETWORK_NAME}
+    driver: ${NETWORK_DRIVER}
+
     

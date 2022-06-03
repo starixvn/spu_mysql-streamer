@@ -44,6 +44,7 @@ from replication import (
 from messaging import build_message
 from app_logging import logging as log
 from replicate_to_neo4j import Neo4jMessageMapper
+from configuration import util_get_config
 from pymysql import connect
 
 class BinlogServer(object):
@@ -133,10 +134,14 @@ class BinlogServer(object):
 
 	def read_message_from_queue(self):
 		try:
-			connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.18.200.73'))
+
+			rabbitMQ_conf = util_get_config('rabbitmq')
+			rabbitMQ_queueName = rabbitMQ_conf['queue_name']
+
+			connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitMQ_conf['host']))
 			channel = connection.channel()
 
-			channel.queue_declare(queue='mysql-streamer')
+			channel.queue_declare(queue=rabbitMQ_queueName)
 			replicator = StreamReplicator(self.mysql)
 
 			def ack_message(ch, delivery_tag):
@@ -208,7 +213,7 @@ class BinlogServer(object):
 			channel.basic_qos(prefetch_count=1)
 			threads = []
 			on_message_callback = functools.partial(on_message, args=(connection, threads))
-			channel.basic_consume('mysql-streamer', on_message_callback)
+			channel.basic_consume(rabbitMQ_queueName, on_message_callback)
 			channel.start_consuming()
 
 			for thread in threads:

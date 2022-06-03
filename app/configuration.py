@@ -5,8 +5,7 @@ from decimal import Decimal
 from configparser import ConfigParser
 from app_const import CONF_PATH
 
-#DEFAUL_CONF_PATH='{0}/config.ini'.format(CONF_PATH)
-DEFAUL_CONF_PATH='D:/Work/CTS/MySQL-Streamer/conf/config.ini'
+DEFAUL_CONF_PATH='{0}/config.ini'.format(CONF_PATH)
 
 def util_get_config(section, conf_file=DEFAUL_CONF_PATH):
     if not conf_file or not os.path.isfile(conf_file):
