@@ -62,6 +62,11 @@ class AssociationGroupByAIRun(Neo4jContext):
                 UNWIND $batch as row
                 MATCH (c:CTSCustomer {CustID:toInteger(row.CustID), CustSubID: 0})-[r:GROUP_BY_AI]->(g:AIGroup {GroupID:toInteger(row.OldGroupID)})
                 DELETE r
+                WITH g
+                OPTIONAL MATCH (g)-[r:GROUP_BY_AI]-(:CTSCustomer)
+                WITH COUNT(r) AS Quantity, g
+                WHERE Quantity = 0
+                DELETE g
                """
         tx.run(remove_all, batch=batch)
 
