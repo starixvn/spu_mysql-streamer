@@ -18,8 +18,8 @@ class AssociationGroupByAIRun(Neo4jContext):
                     UNWIND $batch as row
                     MERGE (c:CTSCustomer {CustID:toInteger(row.CustID), CustSubID: 0})
                     MERGE (g:AIGroup {GroupID:toInteger(row.NewGroupID)})
-                    CREATE (c)-[r:GROUP_BY_AI]->(g)
-                    SET r.CreatedDate=datetime(row.CreatedDate)
+                    MERGE (c)-[r:GROUP_BY_AI]->(g)
+                    ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
                         , r.OriginGroupID=toInteger(row.NewOriginGroupID)
                     RETURN ID(r) as NID
                 """
@@ -41,8 +41,8 @@ class AssociationGroupByAIRun(Neo4jContext):
                     DELETE r
                     WITH c, row
                     MERGE (g:AIGroup {GroupID:toInteger(row.NewGroupID)})
-                    CREATE (c)-[r:GROUP_BY_AI]->(g)
-                    SET r.CreatedDate=datetime(row.CreatedDate)
+                    MERGE (c)-[r:GROUP_BY_AI]->(g)
+                    ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
                         , r.OriginGroupID=toInteger(row.NewOriginGroupID)
                     RETURN ID(r) as NID
                 """
