@@ -36,9 +36,9 @@ class CustEvidenceRun(Neo4jContext):
             WHERE row.Level = 0
             MERGE (n)-[r:HAS_EVIDENCE]->(c)
             ON CREATE SET r.CreatedDate=datetime(row.CreatedDate)
-            WITH DISTINCT n,r
+            WITH DISTINCT n
             SET n:FlaggedCustomer
-            RETURN ID(r) as RID
+            RETURN ID(n) as RID
             """
         
         # node first
@@ -54,10 +54,10 @@ class CustEvidenceRun(Neo4jContext):
         # add relationship
         create_bulk = """
             UNWIND $batch as row
-            MATCH (n:CTSCustomer {CTSCustID:row.CTSCustID})
-            MATCH (c:Evidence {EvidenceID:row.EvidenceID})
+            MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MATCH (c:Evidence {EvidenceID:toInteger(row.EvidenceID)})
             WHERE row.Level = 0
-            MERGE (n)-[r:HAS_EVIDENCE]-(c)
+            MERGE (n)-[r:HAS_EVIDENCE]->(c)
             ON MATCH SET r.CreatedDate=datetime(row.CreatedDate)
             RETURN ID(r) as RID
             """
@@ -73,12 +73,13 @@ class CustEvidenceRun(Neo4jContext):
         # remove AIO
         remove_all = """
             UNWIND $batch as row
-            MATCH (n:CTSCustomer {CTSCustID:row.CTSCustID})
-            MATCH (c:Evidence {EvidenceID:row.EvidenceID})
-            MATCH (n)-[r:HAS_EVIDENCE]-(c)
+            MATCH (n:CTSCustomer {CTSCustID:toInteger(row.CTSCustID)})
+            MATCH (c:Evidence {EvidenceID:toInteger(row.EvidenceID)})
+            MATCH (n)-[r:HAS_EVIDENCE]->(c)
+            WHERE row.Level = 0
             DELETE r
             WITH n
-            WHERE NOT EXISTS((n)-[:HAS_EVIDENCE]-(:Evidence))
+            WHERE NOT EXISTS((n)-[:HAS_EVIDENCE]->(:Evidence))
             REMOVE n:FlaggedCustomer
             RETURN COUNT(n)
             """
@@ -97,5 +98,5 @@ class CustEvidenceRun(Neo4jContext):
 
     @classmethod
     def delete_binlog(cls, tx, raws:list):
-        batch = [HAS_EVIDENCE(r["before"]["CTSCustID"],r["before"]["EvidenceID"]) for r in raws]
+        batch = [HAS_EVIDENCE(r["before"]["CTSCustID"],r["before"]["EvidenceID"],r["before"]["Level"]) for r in raws]
         cls.delete_batch(tx, batch)
