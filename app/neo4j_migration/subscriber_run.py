@@ -1,8 +1,8 @@
 import sys
 import datetime
 import json
-from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from neo4j_migration.nodes import Subscriber,NodeEncoder
+from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from app.neo4j_migration.nodes import Subscriber,NodeEncoder
 
 class SubscriberRun(Neo4jContext):
     def __init__(self, label="Subscriber",database=DEFAULT_DATABASE):

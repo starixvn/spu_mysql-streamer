@@ -3,7 +3,7 @@ import time
 from datetime import datetime, date
 from decimal import Decimal
 from configparser import ConfigParser
-from app_const import CONF_PATH
+from app.app_const import CONF_PATH
 
 DEFAUL_CONF_PATH='{0}/config.ini'.format(CONF_PATH)
 

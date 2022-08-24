@@ -1,9 +1,9 @@
 import sys
 import datetime
 import json
-from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from neo4j_migration.nodes import NodeEncoder
-from neo4j_migration.relationships import GROUP_BY_AI
+from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from app.neo4j_migration.nodes import NodeEncoder
+from app.neo4j_migration.relationships import GROUP_BY_AI
 
 class AssociationGroupByAIRun(Neo4jContext):
     def __init__(self, label="GROUP_BY_AI",database=DEFAULT_DATABASE):

@@ -1,9 +1,9 @@
 import sys
 import datetime
 import json
-from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from neo4j_migration.nodes import CTSCustomer, Evidence,NodeEncoder
-from neo4j_migration.relationships import HAS_EVIDENCE
+from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from app.neo4j_migration.nodes import CTSCustomer, Evidence,NodeEncoder
+from app.neo4j_migration.relationships import HAS_EVIDENCE
 
 class CustEvidenceRun(Neo4jContext):
     def __init__(self, label="HAS_EVIDENCE",database=DEFAULT_DATABASE):

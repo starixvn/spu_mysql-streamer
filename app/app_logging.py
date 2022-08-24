@@ -2,7 +2,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 import datetime
-from app_const import LOG_PATH
+from app.app_const import LOG_PATH
 
 # Get environment variables
 DEBUG_LEVEL = os.getenv('MYSQL_STREAMER_DEBUG_LEVEL')
