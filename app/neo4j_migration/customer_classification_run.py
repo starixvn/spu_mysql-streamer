@@ -54,7 +54,7 @@ class CTSCustomerClassificationRun(Neo4jContext):
             MATCH (n:CTSCustomer {CustID:toInteger(row.CustID), CustSubID:0})
             MATCH (c:CustomerCategory {CategoryID:row.BeforeCategoryID})
             WHERE row.BeforeCategoryID <> row.CategoryID
-            MATCH (n)-[r:HAS_CATEGORY]-(c)
+            MATCH (n)-[r:HAS_CATEGORY]->(c)
             DELETE r
             """
         tx.run(remove_relationship,batch=batch)
@@ -81,9 +81,8 @@ class CTSCustomerClassificationRun(Neo4jContext):
         # remove AIO
         remove_all = """
             UNWIND $batch as row
-            MATCH (n:CTSCustomer {CustID:toInteger(row.CustID), CustSubID:0})
-            MATCH (c:CustomerCategory {CategoryID:row.CategoryID})
-            MATCH (n)-[r:HAS_CATEGORY]-(c)
+            MATCH (n:CTSCustomer {CustID:toInteger(row.CustID), CustSubID:0})-[r:HAS_CATEGORY]->(c:CustomerCategory {CategoryID:row.CategoryID})
+            USING INDEX n:CTSCustomer(CustID,CustSubID)
             DELETE r
             """
         tx.run(remove_all, batch=batch)
