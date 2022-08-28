@@ -1,7 +1,7 @@
 import sys
 import datetime
 import json
-from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
 
 class CTSCustomerRun(Neo4jContext):
     def __init__(self, label="CTSCustomer",database=DEFAULT_DATABASE):

@@ -1,8 +1,8 @@
 import sys
 import datetime
 import json
-from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from app.neo4j_migration.nodes import Evidence,NodeEncoder
+from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from neo4j_migration.nodes import Evidence,NodeEncoder
 
 class EvidenceRun(Neo4jContext):
     def __init__(self, label="Evidence",database=DEFAULT_DATABASE):

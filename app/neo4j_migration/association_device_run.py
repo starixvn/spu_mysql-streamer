@@ -1,8 +1,8 @@
 import sys
 import datetime
 import json
-from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from app.neo4j_migration.nodes import Device,NodeEncoder
+from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from neo4j_migration.nodes import Device,NodeEncoder
 
 class AssociationByDeviceRun(Neo4jContext):
     def __init__(self, label="Device",database=DEFAULT_DATABASE):

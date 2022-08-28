@@ -1,6 +1,6 @@
 ﻿import sys
 from datetime import datetime
-from app.neo4j_migration.relationships import BELONG_TO_SUB
+from neo4j_migration.relationships import BELONG_TO_SUB
 from json import JSONEncoder
 
 class BaseNode(object):

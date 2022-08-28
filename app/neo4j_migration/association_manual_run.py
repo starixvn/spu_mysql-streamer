@@ -1,9 +1,9 @@
 import sys
 import datetime
 import json
-from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from app.neo4j_migration.nodes import CTSCustomer,NodeEncoder
-from app.neo4j_migration.relationships import ADD_MANUALLY
+from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from neo4j_migration.nodes import CTSCustomer,NodeEncoder
+from neo4j_migration.relationships import ADD_MANUALLY
 
 class AssociationByManualRun(Neo4jContext):
     def __init__(self, label="ADD_MANUALLY",database=DEFAULT_DATABASE):

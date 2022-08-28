@@ -1,9 +1,9 @@
 import sys
 import datetime
 import json
-from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from app.neo4j_migration.nodes import CTSCustomer,NodeEncoder
-from app.neo4j_migration.relationships import HAS_EXCEPTION
+from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from neo4j_migration.nodes import CTSCustomer,NodeEncoder
+from neo4j_migration.relationships import HAS_EXCEPTION
 
 class AssociationRemoveRun(Neo4jContext):
     def __init__(self, label="HAS_EXCEPTION",database=DEFAULT_DATABASE):

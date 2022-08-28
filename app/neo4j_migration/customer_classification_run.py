@@ -1,9 +1,9 @@
 import sys
 import datetime
 import json
-from app.neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
-from app.neo4j_migration.nodes import CustomerCategory,NodeEncoder
-from app.neo4j_migration.relationships import HAS_CATEGORY
+from neo4j_migration.model_bootstrap import Neo4jContext, DEFAULT_DATABASE
+from neo4j_migration.nodes import CustomerCategory,NodeEncoder
+from neo4j_migration.relationships import HAS_CATEGORY
 
 class CTSCustomerClassificationRun(Neo4jContext):
     def __init__(self, label="HAS_CATEGORY",database=DEFAULT_DATABASE):

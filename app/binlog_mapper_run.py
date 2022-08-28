@@ -32,7 +32,7 @@ from pymysqlreplication.row_event import (
 )
 
 #from configuration import *
-from app.replication import (
+from replication import (
 	StreamReplicator,
 	BuildPayload,
 	BuildMessage,
@@ -41,10 +41,10 @@ from app.replication import (
 	datetime_handler
 )
 
-from app.messaging import build_message
-from app.app_logging import logging as log
-from app.replicate_to_neo4j import Neo4jMessageMapper
-from app.configuration import util_get_config
+from messaging import build_message
+from app_logging import logging as log
+from replicate_to_neo4j import Neo4jMessageMapper
+from configuration import util_get_config
 from pymysql import connect
 
 class BinlogServer(object):

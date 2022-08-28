@@ -1,5 +1,5 @@
-from app.configuration import util_get_config
-from app.binlog_mapper_run import BinlogServer
+from configuration import util_get_config
+from binlog_mapper_run import BinlogServer
 
 
 # replicator

@@ -2,8 +2,8 @@ import sys
 from datetime import datetime, date
 import json
 from multiprocessing import shared_memory
-from app.app_logging import logging as log
-from app.app_const import CONF_PATH
+from app_logging import logging as log
+from app_const import CONF_PATH
 
 def datetime_handler(x):
     if isinstance(x, (date, datetime)):

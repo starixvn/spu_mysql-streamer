@@ -13,7 +13,7 @@ from pymysqlreplication.row_event import (
 	UpdateRowsEvent
 )
 
-from app.replication import (
+from replication import (
 	StreamReplicator,
 	BuildPayload,
 	BuildMessage

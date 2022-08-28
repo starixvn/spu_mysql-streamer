@@ -3,14 +3,14 @@ import schedule
 from datetime import datetime
 import time
 import json
-from app.configuration import util_get_config
+from configuration import util_get_config
 from pymysql import connect
-from app.replication import StreamReplicator
-from app.neo4j_collection import Neo4jCollector
+from replication import StreamReplicator
+from neo4j_collection import Neo4jCollector
 import threading
 from multiprocessing import shared_memory
-from app.app_logging import logging as log
-from app.app_const import CONF_PATH
+from app_logging import logging as log
+from app_const import CONF_PATH
 
 def binlog_job():
     conf = util_get_config('mysql')

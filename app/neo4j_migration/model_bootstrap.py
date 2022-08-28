@@ -1,7 +1,7 @@
 import sys
 from neo4j import GraphDatabase
-from app.configuration import util_get_config
-from app.app_const import DEFAULT_DATABASE
+from configuration import util_get_config
+from app_const import DEFAULT_DATABASE
 
 class Neo4jConnector:
     def __init__(self, uri, user, password, database=None):

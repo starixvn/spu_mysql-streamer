@@ -2,8 +2,8 @@ import sys
 import time
 import threading
 from multiprocessing import shared_memory
-from app.server import BinlogFactory
-from app.monitoring import run_monitoring
+from server import BinlogFactory
+from monitoring import run_monitoring
 
 act=None
 if len(sys.argv) > 1:
